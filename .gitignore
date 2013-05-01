@@ -1,0 +1,13 @@
+**/*.class
+**/*.exe
+**/*.ilk
+**/*.manifest
+**/*.ncb
+**/*.o
+**/*.object
+**/*.obj
+**/*.pdb
+**/debug/
+**/Debug/
+**/Release/
+
