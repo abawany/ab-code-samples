@@ -1,5 +1,8 @@
 **/*.class
+**/*.dep
 **/*.exe
+**/BuildLog.htm
+**/*.idb
 **/*.ilk
 **/*.manifest
 **/*.ncb
@@ -7,7 +10,7 @@
 **/*.object
 **/*.obj
 **/*.pdb
-**/debug/
-**/Debug/
-**/Release/
-
+**/*.user
+**/debug
+**/Debug
+**/Release
