@@ -1,6 +1,7 @@
 
-# This function does not handle integer overflow that can result from multiplying
-# all of the elements in the passed-in list
+# This function would not handle integer overflow that can result from multiplying
+# all of the elements in the passed-in list though it appears that Python doesn't
+# suffer from this limitation for integers
 def getProductOfAllButCurrentIndex(intList):
 	product=1
 	for val in intList:
@@ -16,7 +17,7 @@ def getProductOfAllButCurrentIndex(intList):
 	return outList
 
 if __name__ == "__main__":
-	inList=[-1,-2,1,2,3,4]
+	inList=[-1,-2,1,2,3,4,9999999999999999999999999999999999999999999999999999999]
 	rsList=getProductOfAllButCurrentIndex(inList)
 	
 	for val in inList:
