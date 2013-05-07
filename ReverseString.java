@@ -5,7 +5,7 @@ class ReverseString {
 	/**
 	* Given an input string (in), returns a version with the character
 	* order reversed. Thus, "Hello World" will be returned as 
-	* "World Hello". If a null string is provided, then an 
+	* "dlroW olleH". If a null string is provided, then an 
 	* IllegalArgumentException is thrown.
 	*/
 	public static String reverse(String in) {
