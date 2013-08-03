@@ -1,3 +1,5 @@
+*.class
+*.exe
 **/*.class
 **/*.dep
 **/*.exe
@@ -11,6 +13,8 @@
 **/*.obj
 **/*.pdb
 **/*.user
+**/bin
 **/debug
 **/Debug
+**/**/Debug
 **/Release
