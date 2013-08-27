@@ -5,7 +5,7 @@ import (
 )
 
 func TestB64Encode(t *testing.T) {
-	x := b64Encode()
+	x := b64Encode("Man is distinguished, not only by his reason")
 	if x != "e" {
 		t.Errorf("B64Encode failed %s", x)
 	}
