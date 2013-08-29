@@ -13,9 +13,11 @@ func b64Encode(inVal string) string {
 		encd[c] = inVal[c]
 	}
 
-	for i :=0; i<len(encd);  {
-		var triple int32 = (0 << 24) | (int32(encd[i]) << 16)
-		triple |= ((i+1) < len(encd)) ? int32(encd(i) << 8) : (0 << 8)
+	var leftover uint8 = 0x00
+	for i := 0; i < len(encd); i++ {
+		var sixbit uint8 = 0xfc & encd[i]
+		leftover = 0x3 & encd[i]
+		fmt.Printf("%b %b\n", sixbit, leftover)
 	}
 
 	return "e"
