@@ -6,41 +6,30 @@ from HTMLParser import HTMLParser
 class MyHTMLParser(HTMLParser):
 		def __init__(self, url):
 			HTMLParser.__init__(self)
-			self.state=0
 			self.url=url
 			self.base_url=self.url[:self.url.rfind("/")+1]
-			print self.base_url
+			print "base url [" + self.base_url + "]\n"
+			self.file_count = 0
 		
 		def handle_starttag(self, tag, attrs):
-			if tag=="li":
-				self.state=1
-				#print "l ", attrs
-				
-			elif tag=="a" and self.state==1:
-				self.state=2
-				for attr in attrs:
-					if attr[0]=="href":
-						file_name=attr[1][attr[1].rfind("/")+1:]
-						file_data=urllib2.urlopen(self.base_url+attr[1])
-						print "file-get ", file_name, " ", file_data.getcode()
-						if file_data.getcode()==200:
-							filebuf=file_data.read()
-							outfile=open(file_name, "wb")
-							print "opened ", file_name
-							outfile.write(filebuf)
-							outfile.close()
-				
-			#else:
-				#print "tag ", tag
+
+			for attr in attrs:
+				# print "attr " + attr[0] + " " + attr[1]
+				if attr[0]=="href" and (attr[1].rfind("pdf") != -1):
+					file_name=attr[1][attr[1].rfind("/")+1:]
+					file_data=urllib2.urlopen(self.base_url+attr[1])
+					print "file-get ", file_name, " ", file_data.getcode()
+					if file_data.getcode()==200:
+						filebuf=file_data.read()
+						outfilename = str(self.file_count) + file_name # keep track of file order
+						self.file_count = self.file_count + 1
+						outfile=open(outfilename, "wb")
+						print "opened ", outfilename
+						outfile.write(filebuf)
+						outfile.close()
 				
 		def handle_endtag(self, tag):
-			if tag=="li":
-				self.state=0
-			elif tag=="a" and self.state==2:
-				self.state=1
-				
-		#def handle_data(self, data):
-			#print "data ", self.state, " ", data
+			return None
 
 def getter(url):
 	parser=MyHTMLParser(url)
