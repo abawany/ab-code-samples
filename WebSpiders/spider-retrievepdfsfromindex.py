@@ -9,7 +9,7 @@ class MyHTMLParser(HTMLParser):
 			self.url=url
 			self.base_url=self.url[:self.url.rfind("/")+1]
 			print "base url [" + self.base_url + "]\n"
-			self.file_count = 0
+			# self.file_count = 0
 		
 		def handle_starttag(self, tag, attrs):
 
@@ -21,8 +21,8 @@ class MyHTMLParser(HTMLParser):
 					print "file-get ", file_name, " ", file_data.getcode()
 					if file_data.getcode()==200:
 						filebuf=file_data.read()
-						outfilename = str(self.file_count) + file_name # keep track of file order
-						self.file_count = self.file_count + 1
+						outfilename = file_name # keep track of file order
+						# self.file_count = self.file_count + 1
 						outfile=open(outfilename, "wb")
 						print "opened ", outfilename
 						outfile.write(filebuf)
