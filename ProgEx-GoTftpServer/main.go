@@ -1,9 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/gob"
-	"encoding/hex"
 	"flag"
 	"log"
 	"net"
@@ -42,25 +39,19 @@ func listenForConnections(lsnPort int) {
 	}
 	defer udpConn.Close()
 
-	var buf []byte = make([]byte, 0, 1024)
+	var buf []byte = make([]byte, 1024)
 	// listen for commands
 	for {
-		sz, dstUDPAddr, err := udpConn.ReadFromUDP(buf)
+		_, dstUDPAddr, err := udpConn.ReadFromUDP(buf)
 		if err != nil || dstUDPAddr == nil {
-			log.Printf("Error while waiting for command %v %v\n", err, dstUDPAddr)
+			log.Printf("Error while waiting for command %v %v\n",
+				err, dstUDPAddr)
 			continue // not fatal - try to read another command
 		}
 
 		// deserialize the buffer to the command struct
-		var cmd pktCmd
-		var dec *gob.Decoder = gob.NewDecoder(bytes.NewBuffer(buf))
-		err = dec.Decode(&cmd)
-		if err != nil {
-			log.Printf("Got garbled message from %s:%d size [%d] dump [%s] %v",
-				dstUDPAddr.IP.String(), dstUDPAddr.Port, sz,
-				hex.Dump(buf), err)
-			continue // not fatal - try to read another command
-		}
+		cmd, err := decodeCmd(buf)
+		log.Println("cmd", cmd)
 	}
 }
 
