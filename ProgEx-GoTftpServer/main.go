@@ -44,14 +44,23 @@ func listenForConnections(lsnPort int) {
 	for {
 		_, dstUDPAddr, err := udpConn.ReadFromUDP(buf)
 		if err != nil || dstUDPAddr == nil {
-			log.Printf("Error while waiting for command %v %v\n",
-				err, dstUDPAddr)
+			log.Printf("Error while waiting for command %v %v\n", err, dstUDPAddr)
 			continue // not fatal - try to read another command
 		}
 
 		// deserialize the buffer to the command struct
 		cmd, err := decodeCmd(buf)
-		log.Println("cmd", cmd)
+		if err != nil {
+			log.Printf("Error decoding cmd %v\n", err)
+			continue // not fatal - wait for another command
+		}
+		
+		switch cmd.cmd {
+		case cmdRRQ:
+		case cmdWRQ: 
+		default:
+			log.Printf("Unknown cmd %v", cmd)
+		}
 	}
 }
 
@@ -59,7 +68,7 @@ func main() {
 	var lsnPort *int = flag.Int("port", 69, "listen port (default 69)")
 	flag.Parse()
 
-	log.Printf("About to start listening for connection on port %d", *lsnPort)
+	log.Printf("TFTP: Listening for commands on port %d - interrupt to exit", *lsnPort)
 
 	// spin off the listener in a goroutine
 	go listenForConnections(*lsnPort)
