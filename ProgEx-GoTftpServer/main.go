@@ -16,7 +16,7 @@ var mapTftpCmdToProcess map[tftpCmd](*func(*pktCmd)) = map[tftpCmd](*func(*pktCm
 // acts as a factory to spin off goroutines that work with a connected client
 func cmdFactory(cmd *pktCmd) (pFn *func(*pktCmd), err error) {
 	var ok bool
-	if pFn, ok = mapTftpCmdToProcess[cmd.cmd]; !ok { 
+	if pFn, ok = mapTftpCmdToProcess[cmd.cmd]; !ok {
 		err = fmt.Errorf("ERR: unknown cmd %v", cmd.cmd)
 	}
 

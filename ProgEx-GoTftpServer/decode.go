@@ -71,7 +71,7 @@ func decodeCmd(buf []byte) (cmd *pktCmd, err error) {
 	}
 
 	log.Printf("DEBUG: filename [%s] af [%d] i [%d] j [%d]\n", cmd.fileName, argsFoundCount, i, j)
-	
+
 	if argsFoundCount != 2 {
 		panic("missing null terminator after transfer mode")
 	}
