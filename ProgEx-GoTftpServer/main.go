@@ -9,26 +9,8 @@ import (
 	"strconv"
 )
 
-type tftpCmd uint16
-
-const (
-	cmdRRQ  tftpCmd = 1 << iota
-	cmdWRQ  tftpCmd = 1 << iota
-	cmdDATA tftpCmd = 1 << iota
-	cmdACK  tftpCmd = 1 << iota
-	cmdERR  tftpCmd = 1 << iota
-)
-
-type pktCmd struct {
-	cmd      tftpCmd
-	fileName string
-	mode     string
-}
-
-type pktData struct {
-	opCode   tftpCmd
-	blockNum uint16
-	data     []byte
+// acts as a factory to spin off goroutines that work with a connected client
+func cmdFactory(cmd *pktCmd) {
 }
 
 func listenForConnections(lsnPort int) {
@@ -54,10 +36,10 @@ func listenForConnections(lsnPort int) {
 			log.Printf("Error decoding cmd %v\n", err)
 			continue // not fatal - wait for another command
 		}
-		
+
 		switch cmd.cmd {
 		case cmdRRQ:
-		case cmdWRQ: 
+		case cmdWRQ:
 		default:
 			log.Printf("Unknown cmd %v", cmd)
 		}

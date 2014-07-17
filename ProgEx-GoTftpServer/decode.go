@@ -5,12 +5,34 @@ import (
 	"log"
 )
 
+type tftpCmd uint16
+
+const (
+	cmdRRQ  tftpCmd = 1 << iota
+	cmdWRQ  tftpCmd = 1 << iota
+	cmdDATA tftpCmd = 1 << iota
+	cmdACK  tftpCmd = 1 << iota
+	cmdERR  tftpCmd = 1 << iota
+)
+
+type pktCmd struct {
+	cmd      tftpCmd
+	fileName string
+	mode     string
+}
+
+type pktData struct {
+	opCode   tftpCmd
+	blockNum uint16
+	data     []byte
+}
+
 func decodeCmd(buf []byte) (cmd *pktCmd, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("Error in decodeCmd ", r)
-			err = fmt.Errorf("ERR: decodeCmd %v", r) 
+			err = fmt.Errorf("ERR: decodeCmd %v", r)
 		}
 	}()
 
