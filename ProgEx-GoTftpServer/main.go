@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -9,8 +10,17 @@ import (
 	"strconv"
 )
 
+var mapTftpCmdToProcess map[tftpCmd](*func(*pktCmd)) = map[tftpCmd](*func(*pktCmd)){
+	cmdRRQ: &sendFile, cmdWRQ: &recvFile}
+
 // acts as a factory to spin off goroutines that work with a connected client
-func cmdFactory(cmd *pktCmd) {
+func cmdFactory(cmd *pktCmd) (pFn *func(*pktCmd), err error) {
+	var ok bool
+	if pFn, ok = mapTftpCmdToProcess[cmd.cmd]; !ok { 
+		err = fmt.Errorf("ERR: unknown cmd %v", cmd.cmd)
+	}
+
+	return pFn, err
 }
 
 func listenForConnections(lsnPort int) {
@@ -37,12 +47,14 @@ func listenForConnections(lsnPort int) {
 			continue // not fatal - wait for another command
 		}
 
-		switch cmd.cmd {
-		case cmdRRQ:
-		case cmdWRQ:
-		default:
-			log.Printf("Unknown cmd %v", cmd)
+		// add the client tid to the cmd struct
+		cmd.tid = dstUDPAddr
+
+		fnProcess, err := cmdFactory(cmd)
+		if err != nil {
+			log.Printf("Unable to process cmd: %v", err)
 		}
+		go (*fnProcess)(cmd)
 	}
 }
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 )
 
 type tftpCmd uint16
@@ -19,6 +20,7 @@ type pktCmd struct {
 	cmd      tftpCmd
 	fileName string
 	mode     string
+	tid      *net.UDPAddr
 }
 
 type pktData struct {
@@ -57,7 +59,9 @@ func decodeCmd(buf []byte) (cmd *pktCmd, err error) {
 		panic("missing null terminator after filename")
 	}
 
-	(*cmd).fileName = string(buf[2:i])
+	cmd.fileName = string(buf[2:i])
+
+	log.Printf("DEBUG: filename [%s] af [%d] i [%d] j [%d]\n", cmd.fileName, argsFoundCount, i, j)
 
 	for j = i + 1; j < len(buf); j++ {
 		if buf[j] == 0 {
@@ -65,13 +69,16 @@ func decodeCmd(buf []byte) (cmd *pktCmd, err error) {
 			break
 		}
 	}
+
+	log.Printf("DEBUG: filename [%s] af [%d] i [%d] j [%d]\n", cmd.fileName, argsFoundCount, i, j)
+	
 	if argsFoundCount != 2 {
 		panic("missing null terminator after transfer mode")
 	}
 
 	cmd.mode = string(buf[i+1 : j])
 	if cmd.mode != "octet" {
-		panic("server only supports octet transfer mode")
+		panic(fmt.Sprintf("server only supports octet transfer mode, got: %s", cmd.mode))
 	}
 
 	return cmd, err
