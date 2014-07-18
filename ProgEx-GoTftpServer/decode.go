@@ -98,12 +98,12 @@ func decodeCmd(buf []byte) (cmd *pktCmd, err error) {
 	log.Printf("DEBUG: filename [%s] af [%d] i [%d] j [%d]\n", cmd.fileName, argsFoundCount, i, j)
 
 	if argsFoundCount != 2 {
-		panic("missing null terminator after transfer mode")
+		panic("ERR: missing null terminator after transfer mode")
 	}
 
 	cmd.mode = string(buf[i+1 : j])
 	if cmd.mode != "octet" {
-		panic(fmt.Sprintf("server only supports octet transfer mode, got: %s", cmd.mode))
+		panic(fmt.Sprintf("ERR: server only supports octet transfer mode, got: %s", cmd.mode))
 	}
 
 	return cmd, err

@@ -14,7 +14,7 @@ func listenForConnections(lsnPort int) {
 	lsnAddr, err := net.ResolveUDPAddr("udp", ":"+strconv.Itoa(lsnPort))
 	udpConn, err := net.ListenUDP("udp", lsnAddr)
 	if err != nil {
-		log.Fatalf("Unable to listen on port %d %v", lsnPort, err)
+		log.Fatalf("ERR: Unable to listen on port %d %v", lsnPort, err)
 	}
 	defer udpConn.Close()
 
@@ -23,16 +23,16 @@ func listenForConnections(lsnPort int) {
 	for {
 		_, dstUDPAddr, err := udpConn.ReadFromUDP(buf)
 		if err != nil || dstUDPAddr == nil {
-			log.Printf("Error while waiting for command %v %v\n", err, dstUDPAddr)
+			log.Printf("ERR: [%v] while waiting for command [%v]\n", err, dstUDPAddr)
 			continue // not fatal - try to read another command
 		}
 
 		// deserialize the buffer to the command struct
 		cmd, err := decodeCmd(buf)
 		if err != nil {
-			errMsg := fmt.Sprintf("Error decoding cmd %v\n", err)
+			errMsg := fmt.Sprintf("ERR: Unable to decode cmd %v\n", err)
 			log.Print(errMsg)
-			go (*mapTftpCmdToProcess[cmdNUL])(&pktCmd{tid: dstUDPAddr, errMsg: errMsg})
+			go (*mapTftpCmdToProcess[cmdERR])(&pktCmd{tid: dstUDPAddr, errMsg: errMsg})
 			continue // not fatal - wait for another command
 		}
 
@@ -41,7 +41,9 @@ func listenForConnections(lsnPort int) {
 
 		err = cmd.spinClientHandler()
 		if err != nil {
-			log.Printf("Unable to process cmd: %v", err)
+			errMsg := fmt.Sprintf("ERR: Unable to process cmd: %v", err)
+			log.Print(errMsg)
+			go (*mapTftpCmdToProcess[cmdERR])(&pktCmd{tid: dstUDPAddr, errMsg: errMsg})
 		}
 	}
 }

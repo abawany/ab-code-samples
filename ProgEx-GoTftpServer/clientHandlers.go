@@ -17,7 +17,7 @@ var nullHdlr = func(cmd *pktCmd) {
 	log.Println("nullHdlr")
 	udpConn, err := net.DialUDP("udp", nil, cmd.tid)
 	if err != nil {
-		log.Printf("unable to return error [%v] to client [%v]\n", err, cmd.tid)
+		log.Printf("ERR: unable to return error [%v] to client [%v]\n", err, cmd.tid)
 		return
 	}
 
@@ -29,6 +29,6 @@ var nullHdlr = func(cmd *pktCmd) {
 	rsp := buildErrPkt(errCodeUndefined, errMsgStr)
 	_, err = udpConn.Write(rsp)
 	if err != nil {
-		log.Printf("unable to write error response to client [%] due to [%v]\n", cmd.tid, err)
+		log.Printf("ERR: unable to write error response to client [%] due to [%v]\n", cmd.tid, err)
 	}
 }
