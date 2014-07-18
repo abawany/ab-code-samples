@@ -23,6 +23,7 @@ type pktCmd struct {
 	mode       string
 	tid        *net.UDPAddr
 	clientHdlr (*func(*pktCmd))
+	errMsg     string // TODO: slightly cheesy - overloads this struct to handle special needs of nullHdlr
 }
 
 type pktData struct {

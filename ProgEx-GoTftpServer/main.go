@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -29,8 +30,9 @@ func listenForConnections(lsnPort int) {
 		// deserialize the buffer to the command struct
 		cmd, err := decodeCmd(buf)
 		if err != nil {
-			log.Printf("Error decoding cmd %v\n", err)
-			(*mapTftpCmdToProcess[cmdNUL])(&pktCmd{tid: dstUDPAddr})
+			errMsg := fmt.Sprintf("Error decoding cmd %v\n", err)
+			log.Print(errMsg)
+			go (*mapTftpCmdToProcess[cmdNUL])(&pktCmd{tid: dstUDPAddr, errMsg: errMsg})
 			continue // not fatal - wait for another command
 		}
 
