@@ -17,16 +17,39 @@ const (
 )
 
 type pktCmd struct {
-	cmd      tftpCmd
-	fileName string
-	mode     string
-	tid      *net.UDPAddr
+	cmd        tftpCmd
+	fileName   string
+	mode       string
+	tid        *net.UDPAddr
+	clientHdlr (*func(*pktCmd))
 }
 
 type pktData struct {
 	opCode   tftpCmd
 	blockNum uint16
 	data     []byte
+}
+
+var mapTftpCmdToProcess map[tftpCmd](*func(*pktCmd)) = map[tftpCmd](*func(*pktCmd)){
+	cmdRRQ: &sendFile, cmdWRQ: &recvFile}
+
+// returns a function that can used in a goroutine to interact with a connected client
+func (cmd *pktCmd) spinClientHandler() (err error) {
+	var ok bool
+	var pFn *func(*pktCmd)
+
+	if pFn, ok = mapTftpCmdToProcess[cmd.cmd]; !ok {
+		err = fmt.Errorf("ERR: unknown cmd %v", cmd.cmd)
+	}
+
+	cmd.clientHdlr = pFn
+
+	return err
+}
+
+// this method interacts with a client to receive or send a file. It will self terminate if the client
+// doesn't interact with it for a minute
+func (cmd *pktCmd) handleClientReq() {
 }
 
 func decodeCmd(buf []byte) (cmd *pktCmd, err error) {
