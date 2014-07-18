@@ -30,6 +30,7 @@ func listenForConnections(lsnPort int) {
 		cmd, err := decodeCmd(buf)
 		if err != nil {
 			log.Printf("Error decoding cmd %v\n", err)
+			(*mapTftpCmdToProcess[cmdNUL])(&pktCmd{tid: dstUDPAddr})
 			continue // not fatal - wait for another command
 		}
 

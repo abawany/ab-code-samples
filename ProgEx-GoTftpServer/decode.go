@@ -9,11 +9,12 @@ import (
 type tftpCmd uint16
 
 const (
-	cmdRRQ  tftpCmd = 1 << iota
-	cmdWRQ  tftpCmd = 1 << iota
-	cmdDATA tftpCmd = 1 << iota
-	cmdACK  tftpCmd = 1 << iota
-	cmdERR  tftpCmd = 1 << iota
+	cmdNUL tftpCmd = iota
+	cmdRRQ
+	cmdWRQ
+	cmdDATA
+	cmdACK
+	cmdERR
 )
 
 type pktCmd struct {
@@ -31,7 +32,7 @@ type pktData struct {
 }
 
 var mapTftpCmdToProcess map[tftpCmd](*func(*pktCmd)) = map[tftpCmd](*func(*pktCmd)){
-	cmdRRQ: &sendFile, cmdWRQ: &recvFile}
+	cmdRRQ: &sendFile, cmdWRQ: &recvFile, cmdNUL: &nullHdlr, cmdERR: &nullHdlr}
 
 // returns a function that can used in a goroutine to interact with a connected client
 func (cmd *pktCmd) spinClientHandler() (err error) {
