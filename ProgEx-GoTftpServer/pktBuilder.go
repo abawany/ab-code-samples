@@ -12,7 +12,7 @@ const (
 )
 
 func buildErrPkt(errCode uint16, errMsg string) (msg []byte) {
-	msg = make([]byte, 1024)
+	msg = make([]byte, 4, 1024)
 
 	// add the command bytes
 	msg[0] = byte(0)
@@ -23,14 +23,14 @@ func buildErrPkt(errCode uint16, errMsg string) (msg []byte) {
 	msg[3] = byte(errCode & 0x00ff)
 
 	// add the error message
-	offset := copy(msg[4:], []byte(errMsg))
-	msg[4+offset] = 0 // null terminate string
+	msg = append(msg, []byte(errMsg)...)
+	msg = append(msg, []byte{0}...) // null terminate
 
 	return msg
 }
 
 func buildAckPkt(blockNum uint16) (msg []byte) {
-	msg = make([]byte, 1024)
+	msg = make([]byte, 4)
 
 	// add the command bytes
 	msg[0] = byte(0)

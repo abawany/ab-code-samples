@@ -119,9 +119,6 @@ func (cmd *pktCmd) rrqHdlr(udpConn *net.UDPConn) {
 	var ackBuf []byte = make([]byte, 100)
 
 	for i := 0; i < chunks+1; { // go one over the limit to handle the final unaligned chunk
-
-		log.Println("A", i, chunks, len(fileBuf), finalChunk, startOffset, endOffset, endOffset-startOffset)
-
 		if i == chunks {
 			if finalChunk > 0 {
 				endOffset = startOffset + finalChunk
@@ -130,17 +127,13 @@ func (cmd *pktCmd) rrqHdlr(udpConn *net.UDPConn) {
 			}
 		}
 
-		log.Println("B", startOffset, endOffset, endOffset-startOffset)
-
 		pkt := buildDataPkt(blockNum, fileBuf[startOffset:endOffset])
-		log.Println("len(dataPkt)", len(pkt), " d ", pkt)
 		_, err = udpConn.Write(pkt)
 		if err != nil {
 			panic(fmt.Sprintf("Client [%v] error [%v] sending chunk [%d] of [%d]",
 				cmd.tid, err, i, chunks))
 		}
 
-		log.Println("D")
 		// wait (timed) for ack
 		udpConn.SetReadDeadline(time.Now().Add(_TIMEOUT))
 		_, err = udpConn.Read(ackBuf)
