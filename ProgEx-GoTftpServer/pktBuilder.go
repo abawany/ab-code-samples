@@ -44,7 +44,7 @@ func buildAckPkt(blockNum uint16) (msg []byte) {
 }
 
 func buildDataPkt(blockNum uint16, data []byte) (msg []byte) {
-	msg = make([]byte, 1024)
+	msg = make([]byte, 4, 1024)
 
 	// add command bytes
 	msg[0] = byte(0)
@@ -54,7 +54,9 @@ func buildDataPkt(blockNum uint16, data []byte) (msg []byte) {
 	msg[2] = byte(blockNum << 8)
 	msg[3] = byte(blockNum & 0x00ff)
 
-	copy(msg[4:], data)
+	if len(data) > 0 {
+		msg = append(msg, data...)
+	}
 
 	return msg
 }

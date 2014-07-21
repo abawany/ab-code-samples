@@ -30,9 +30,8 @@ func listenForConnections(lsnPort int) {
 		// deserialize the buffer to the command struct
 		cmd, err := decodeCmd(buf)
 		if err != nil {
-			errMsg := fmt.Sprintf("ERR: Unable to decode cmd %v\n", err)
-			log.Print(errMsg)
-			go (*mapTftpCmdToProcess[cmdERR])(&pktCmd{tid: dstUDPAddr, errMsg: errMsg})
+			log.Printf("ERR: Unable to decode cmd %v\n", err)
+			go errHdlr(&pktCmd{tid: dstUDPAddr}, err.Error())
 			continue // not fatal - wait for another command
 		}
 
@@ -43,7 +42,8 @@ func listenForConnections(lsnPort int) {
 		if err != nil {
 			errMsg := fmt.Sprintf("ERR: Unable to process cmd: %v", err)
 			log.Print(errMsg)
-			go (*mapTftpCmdToProcess[cmdERR])(&pktCmd{tid: dstUDPAddr, errMsg: errMsg})
+			go errHdlr(cmd, errMsg)
+			continue
 		}
 	}
 }
