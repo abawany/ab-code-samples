@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"sync"
 )
 
 func listenForConnections(lsnPort int) {
@@ -38,15 +39,25 @@ func listenForConnections(lsnPort int) {
 		// add the client tid to the cmd struct
 		cmd.tid = dstUDPAddr
 
-		err = cmd.spinClientHandler()
-		if err != nil {
-			errMsg := fmt.Sprintf("ERR: Unable to process cmd: %v", err)
-			log.Print(errMsg)
-			go errHdlr(cmd, errMsg)
-			continue
-		}
+		// spin off a goroutine to interact with a connected client
+		go func(cmd *pktCmd) {
+			waitGroup.Add(1)
+			defer waitGroup.Done()
+
+			switch cmd.cmd {
+			case cmdRRQ, cmdWRQ:
+				cmd.clientConnectionHandler() // start interacting with client
+
+			default:
+				err = fmt.Errorf("ERR: unexpected cmd %v", cmd.cmd)
+				log.Printf(err.Error())
+				go errHdlr(cmd, err.Error())
+			}
+		}(cmd)
 	}
 }
+
+var waitGroup sync.WaitGroup
 
 func main() {
 	var lsnPort *int = flag.Int("port", 69, "listen port (default 69)")
@@ -61,6 +72,7 @@ func main() {
 	var chanInt = make(chan os.Signal, 1)
 	signal.Notify(chanInt, os.Interrupt, os.Kill)
 	<-chanInt
-
-	log.Println("Got interrupted - exiting")
+	log.Println("Got interrupted - waiting for existing transfers to finish (up to 1 minute)")
+	waitGroup.Wait()
+	log.Println("All transfers finished - exiting")
 }

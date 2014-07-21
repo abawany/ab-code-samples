@@ -9,20 +9,6 @@ import (
 
 const _TIMEOUT time.Duration = 1 * time.Minute
 
-// returns a function that can used in a goroutine to interact with a connected client
-func (cmd *pktCmd) spinClientHandler() (err error) {
-
-	switch cmd.cmd {
-	case cmdRRQ, cmdWRQ:
-		go cmd.clientConnectionHandler() // spin it off
-
-	default:
-		err = fmt.Errorf("ERR: unknown cmd %v", cmd.cmd)
-	}
-
-	return err
-}
-
 func (cmd *pktCmd) clientConnectionHandler() {
 	const fName string = "clientConnectionHandler:"
 
