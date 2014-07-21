@@ -24,7 +24,7 @@ Known Issues:
  
 Application Structure:
 ----------------------
- * Entry point is main.go/main. It spins off a go routine that listens for connections on specified port and it registers a signal handler to listen for interrupts (ctrl+c).
+* Entry point is main.go/main. It spins off a go routine that listens for connections on specified port and it registers a signal handler to listen for interrupts (ctrl+c).
 * The go routine above (main.go/listenForConnections) listens for UDP connections on specified port. When it gets one, it first ensures that it received a legal TFTP packet and that the TFTP command in question is a read (RRQ) or write (WRQ).
 * If the request is legitimate, it spins off an instance of clientConnectionHandler (clientHandlers.go) to interact with the client further, else it returns an error packet to the client and goes back to waiting for new connections.
 * clientConnectionHandler determines whether the command received is of type WRQ (write) or RRQ(read). For the former, it invokes clientHandler.go/wrqHdlr else it invokes clientHandler.go/rrqHdlr.
