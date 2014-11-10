@@ -1,0 +1,35 @@
+apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'java'
+apply plugin: 'jetty'
+apply plugin: 'war'
+
+repositories {
+	mavenCentral()
+	maven { url "https://maven.java.net/content/repositories/releases" }
+}
+
+dependencies {
+	compile "javax.ws.rs:javax.ws.rs-api:2.0.1"
+
+	compile "org.glassfish.jersey.core:jersey-server:2.13"
+	compile "org.glassfish.jersey.core:jersey-common:2.13"
+	compile "org.glassfish.jersey.containers:jersey-container-servlet-core:2.13"
+	compile "org.glassfish.jersey.media:jersey-media-json-jackson:2.13"
+
+	compile "junit:junit-dep:4.11"
+}
+
+eclipse {
+	wtp {
+		component { 
+			deployName = "ProgExJavaRestService"
+		}
+		
+		facet {
+			facet name: 'fctProgExJavaRestService',
+			version: '1.0'
+		}
+	}
+	
+}
