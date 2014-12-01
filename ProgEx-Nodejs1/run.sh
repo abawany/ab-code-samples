@@ -1,2 +1,2 @@
-export NODE_PATH="C:\\Users\\mali\\AppData\\Roaming\\npm\\node_modules"
+export NODE_PATH="{Path to global node modules location}"
 set DEBUG=ProgEx-Nodejs1 && node ./bin/www
