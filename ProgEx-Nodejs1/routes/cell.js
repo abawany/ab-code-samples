@@ -13,9 +13,9 @@ router.get('/:key', function(req, res) {
 	
 	rdsCli.get(key, function(err, val) {
 		console.log({err: err, val: val});
-		if (err) { res.send(500, ''); return; }
-		if (val === null || val.length === 0) { res.send(404, ''); return; }
-		res.send(200, {val: val});
+		if (err) { res.status(500).send(); return; }
+		if (val === null || val.length === 0) { res.status(404).send(); return; }
+		res.status(200).send({val: val});
 		return;
 	});
 });
@@ -27,8 +27,8 @@ router.put('/', function(req, res) {
 	
 	rdsCli.set(key, val, function(err, rsp) {
 		console.log({err: err, rsp: rsp});
-		if (err) { res.send(500, ''); return; }
-		res.send(204, '');
+		if (err) { res.status(500).send(); return; }
+		res.status(204).send();
 		return;
 	});
 });
