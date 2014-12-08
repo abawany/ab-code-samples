@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<title>CORS1</title>
+	</head>
+	<body>
+		<form>
+			<input type='text' id='a1'></input>
+		</form>
+			
+		<script type="text/javascript">
+			var baseUrl = 'http://www.clockduster.com:999/cell';
+			
+			console.log('1');
+			$.ajax(baseUrl + '/A1', {
+				dataType: 'json',
+				xhrFields: { withCredentials: false },
+				success: function(d,s,q) { 
+					console.log(['S', d, s, q]); 
+					$('#a1').val(d.val); 
+				},
+				error: function(d,s,q) {
+					console.log(['E', d, s, q]);
+					$('#a1').val(0);
+				}
+			});
+		
+			var putIt = function(val) { 
+				$.ajax(baseUrl, {
+					dataType: 'application/json',
+					type: 'PUT',
+					data: {key: 'A1', val: val},
+					success: function(d,s,q) { console.log(['S', d,s,q]); },
+					error: function(d,s,q) { console.log(['E', d,s,q]); }
+				});
+			};
+
+			$('#a1').keydown(function(k) {
+				if (k.keyCode === 13) {
+					k.preventDefault();
+					var val = $('#a1').val();
+					console.log('submit ' + val);
+					putIt(val);
+				}
+			});
+		</script>
+		<p>1</p>	
+	</body>
+</html>
