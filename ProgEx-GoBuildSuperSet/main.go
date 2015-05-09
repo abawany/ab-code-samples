@@ -31,7 +31,7 @@ func naiveMakeSuperset(set Set) (superset Superset) {
 
 	for k, _ := range set {
 
-		// to store new elements
+		// to store new elements without interfering with iteration
 		var tmpSuperset = make(Superset)
 
 		for k1, _ := range superset {
@@ -57,12 +57,17 @@ func naiveMakeSuperset(set Set) (superset Superset) {
 	return superset
 }
 
+// premise: given that the superset of a set contains 2^n elements, generate the values
+// from 0 to 2^n-1 and then pick elements from the set given the bit mask of this value.
+// Thus, for n=5, i.e. 0x0101b, pick elements 0 and 2 from the source set to make into a
+// subset that is then inserted into the result superset
 func effectvMakeSuperset(set Set) (superset Superset) {
 	superset = make(Superset)
 
 	var setLen = len(set)
 	var elemsInSuperset = int64(math.Pow(float64(setLen), 2.0))
 
+	// copy source set as array so it can be accessed by index
 	var setAsArr = make([]int, 0, setLen)
 	for k, _ := range set {
 		setAsArr = append(setAsArr, k)
