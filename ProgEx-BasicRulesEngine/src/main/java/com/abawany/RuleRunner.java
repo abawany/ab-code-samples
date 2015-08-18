@@ -1,6 +1,7 @@
 package com.abawany;
 
 import java.util.ServiceLoader;
+import java.util.concurrent.CyclicBarrier;
 
 class RuleRunner {
 	public static void main(String[] args) {
@@ -15,9 +16,26 @@ class RuleRunner {
 
 			ServiceLoader<IRules> sl = ServiceLoader.load(IRules.class);
 
+			// count the number of rules
+			int ruleCount = 0;
+			for (IRules i : sl) {
+				i.hashCode();
+				++ruleCount;
+			}
+
+			if (ruleCount == 0) {
+				throw new Exception("No Rules Found");
+			}
+
+			CyclicBarrier b = new CyclicBarrier(ruleCount);
+
+			// init and run all the rules
+			for (IRules i : sl) {
+				i.initialize(b, vals);
+			}
+
 			boolean allPass = true;
 			for (IRules i : sl) {
-				i.initialize(vals);
 				boolean pass = i.getResult();
 				if (pass) {
 					System.out

@@ -27,7 +27,8 @@ Recipe For Adding New Rules
 
 TODO
 ----
-* Run multi-threaded and enable thread pooling
-* Allow for asynchronous completion check (e.g. java.util.concurrent.CyclicBarrier)
+* Enable thread pooling
 * Use annotations to automatically discover Rule classes
+* (done)Run multi-threaded
+* (done)Allow for asynchronous completion check (e.g. java.util.concurrent.CyclicBarrier)
 

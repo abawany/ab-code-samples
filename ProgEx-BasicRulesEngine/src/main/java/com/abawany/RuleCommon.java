@@ -1,5 +1,7 @@
 package com.abawany;
 
+import java.util.concurrent.CyclicBarrier;
+
 /**
  * This class implements common behaviors for a RuleX class to minimize the
  * amount of boiler-plate needed for the Rule class. Thus, a new RuleX class
@@ -11,6 +13,7 @@ public class RuleCommon implements IRules, Runnable {
 	protected boolean result = false;
 	protected boolean runCompleted = false;
 	Thread t;
+	CyclicBarrier b;
 
 	protected void runThread() {
 		this.t = new Thread(this);
@@ -18,16 +21,19 @@ public class RuleCommon implements IRules, Runnable {
 	}
 
 	public void run() {
-		synchronized (this.t) {
-			this.result = eval();
-			this.runCompleted = true;
-			this.t.notify();
+		this.result = eval();
+		try {
+			this.b.await();
+		} catch (Exception e) {
+			this.result = false;
+			e.printStackTrace();
 		}
 	}
 
 	int[] vals;
 
-	public void initialize(int[] vals) {
+	public void initialize(CyclicBarrier b, int[] vals) {
+		this.b = b;
 		this.vals = vals;
 		this.result = false;
 		this.runThread();
@@ -38,10 +44,6 @@ public class RuleCommon implements IRules, Runnable {
 	}
 
 	public final boolean getResult() throws Exception {
-		synchronized (this.t) {
-			if (!this.runCompleted)
-				this.t.wait();
-		}
 		return this.result;
 	}
 }

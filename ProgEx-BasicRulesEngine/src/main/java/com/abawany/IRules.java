@@ -1,7 +1,9 @@
 package com.abawany;
 
+import java.util.concurrent.CyclicBarrier;
+
 public interface IRules {
-	void initialize(int[] vals);
+	void initialize(CyclicBarrier b, int[] vals);
 
 	/** allows stand-alone invocation of the evaluation function */
 	boolean eval();
