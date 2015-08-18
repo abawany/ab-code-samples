@@ -1,0 +1,31 @@
+<project name="ProgEx-BasicRulesEngine" default="dist" basedir=".">
+	<property name="src" location="src/main/java" />
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+
+	<target name="init">
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac srcdir="${src}" destdir="${build}" />
+	</target>
+
+	<target name="dist" depends="compile">
+		<mkdir dir="${dist}/lib" />
+
+		<jar jarfile="${dist}/lib/ProgEx-BasicRulesEngine-1.0.jar" 
+			basedir="${build}">
+			<fileset dir="${src}/../resources/" />
+			<manifest>
+				<attribute name="Main-Class" value="com.abawany.RuleRunner" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+</project>

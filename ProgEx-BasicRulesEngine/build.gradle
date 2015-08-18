@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.5
+version = '1.0'
+
+jar {
+	baseName = 'ProgEx-BasicRulesEngine'
+	version  = version
+	manifest {
+		attributes 'Main-Class': 'com.abawany.RuleRunner'
+	}
+}
+
+repositories { mavenCentral() }
+
