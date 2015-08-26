@@ -11,7 +11,6 @@ import java.util.concurrent.CyclicBarrier;
 public class RuleCommon implements IRules, Runnable {
 
 	protected boolean result = false;
-	protected boolean runCompleted = false;
 	Thread t;
 	CyclicBarrier b;
 
@@ -21,12 +20,14 @@ public class RuleCommon implements IRules, Runnable {
 	}
 
 	public void run() {
-		this.result = eval();
-		try {
-			this.b.await();
-		} catch (Exception e) {
-			this.result = false;
-			e.printStackTrace();
+		synchronized (this) {
+			this.result = eval();
+			try {
+				this.b.await();
+			} catch (Exception e) {
+				this.result = false;
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -44,6 +45,8 @@ public class RuleCommon implements IRules, Runnable {
 	}
 
 	public final boolean getResult() throws Exception {
-		return this.result;
+		synchronized (this) {
+			return this.result;
+		}
 	}
 }
