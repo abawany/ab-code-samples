@@ -4,14 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-//var cors = require('cors');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var cell = require('./routes/cell');
 var allowCrossDomain = function(rq, rs, n) { 
 	rs.header('Access-Control-Allow-Origin', '*');
-	rs.header('Access-Control-Allow-Methods', 'GET, OPTIONS, POST, PUT');
+	rs.header('Access-Control-Allow-Methods', 'DELETE, GET, OPTIONS, POST, PUT');
 	rs.header('Access-Control-Allow-Headers', 'Accept,Authorization,Cache-Control,Content-Type,Origin,Pragma,X-Requested-With');
 	rs.header('Access-Control-Allow-Credentials', true);
 	n();
@@ -35,7 +34,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(allowCrossDomain); // CORS middleware call
-//app.use(cors()); // CORS middleware call
 app.use(printHeaders);
 app.use(express.static(path.join(__dirname, 'public')));
 
